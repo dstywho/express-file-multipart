@@ -1,11 +1,41 @@
 var express = require('express')
   , format = require('util').format;
 
+
+  var path = require('path');
+  var util = require('util');
+
+var im = require('imagemagick');
+im.readMetadata(path.resolve('kittens.jpg'), function(err, metadata){
+    if (err) throw err;
+      console.log('Shot at '+metadata.exif.dateTimeOriginal);
+      console.log('Shot at '+JSON.stringify(metadata));
+
+    debugger
+    util.print('hi');
+    
+    
+})
+
+im.resize({
+    srcPath: 'kittens.jpg',
+    dstPath: 'kittens-small.jpg',
+    width:   256
+}, function(err, stdout, stderr){
+    if (err) throw err;
+      console.log('resized kittens.jpg to fit within 256x256px');
+});
+
+
+
+
 var app = module.exports = express()
 
 // bodyParser in connect 2.x uses node-formidable to parse 
 // the multipart form data.
 app.use(express.bodyParser())
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
   res.send('<form method="post" enctype="multipart/form-data">'
